@@ -1,5 +1,5 @@
 const API_SERVER = 'https://it3049c-chat.fly.dev'
-const REFRESH_INTERVAL = 10000
+const REFRESH_INTERVAL = 5000
 
 const nameInput = document.getElementById('my-name-input')
 const messageInput = document.getElementById('my-message-input')
@@ -75,7 +75,7 @@ sendButton.addEventListener('click', async (ev) => {
   const sender = nameInput.value
   const message = messageInput.value
   await sendMessage(sender, message)
-  await updateMessages()
+  updateMessages()
   messageInput.value = ''
 })
 
