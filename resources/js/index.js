@@ -1,36 +1,26 @@
+const API_SERVER = 'https://it3049c-chat.fly.dev'
+const REFRESH_INTERVAL = 10000
+
 const nameInput = document.getElementById('my-name-input')
-const messageInput = document.getElementById('my-message')
+const messageInput = document.getElementById('my-message-input')
 const sendButton = document.getElementById('send-button')
 const chatBox = document.getElementById('chat')
 
 /**
- * @returns {Message[]}
+ * @returns {Promise<Message[]>}
  */
-function fetchMessages() {
-  return [
-    {
-      id: 1,
-      text: 'Whats up!',
-      sender: 'Conrad Hale',
-      timestamp: Date.now()
-    },
-    {
-      id: 2,
-      text: 'My man!',
-      sender: 'George Washington',
-      timestamp: Date.now()
-    },
-    {
-      id: 1,
-      text: 'How\'s it going George?',
-      sender: 'Conrad Hale',
-      timestamp: Date.now()
-    },
-  ]
+async function fetchMessages() {
+  try {
+    const res = await fetch(`${API_SERVER}/messages`)
+    return res.json()
+  } catch {
+    return []
+  }
 }
 
 /**
  * @param {Message} msg
+ * @returns {HTMLDivElement}
  */
 function displayMessage(msg) {
   const wrapper = document.createElement('div')
@@ -46,34 +36,49 @@ function displayMessage(msg) {
   senderInfo.classList.add('sender-info')
   const time = new Date(msg.timestamp)
   senderInfo.innerText = `${sender} ${time}`
-  wrapper.appendChild(senderInfo)
-  chatBox.appendChild(wrapper)
+  wrapper.replaceChildren(messageText, senderInfo)
+
+  return wrapper
 }
 
-function updateMessages() {
-  fetchMessages().forEach(displayMessage)
+async function updateMessages() {
+  const msgs = await fetchMessages()
+  const elements = msgs.map(displayMessage)
+  chatBox.replaceChildren(...elements)
 }
 
 /**
  * @param {string} sender
  * @param {string} message
  */
-function sendMessage(sender, message) {
+async function sendMessage(sender, message) {
   /**
    * @type {Message}
    */
   const msg = {
     sender: sender,
     text: message,
-    timestamp: Date.now()
+    timestamp: Date.now().toString()
   }
-  displayMessage(msg)
+
+  await fetch(`${API_SERVER}/messages`, {
+    method: 'post',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(msg)
+  })
 }
 
-sendButton.addEventListener('click', () => {
+sendButton.addEventListener('click', async (ev) => {
+  ev.preventDefault()
   const sender = nameInput.value
   const message = messageInput.value
-  sendMessage(sender, message)
+  await sendMessage(sender, message)
+  await updateMessages()
+  messageInput.value = ''
 })
 
 updateMessages()
+
+setInterval(updateMessages, REFRESH_INTERVAL);
