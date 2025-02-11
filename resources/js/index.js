@@ -75,7 +75,7 @@ sendButton.addEventListener('click', async (ev) => {
   const sender = nameInput.value
   const message = messageInput.value
   await sendMessage(sender, message)
-  updateMessages()
+  await updateMessages()
   messageInput.value = ''
 })
 
