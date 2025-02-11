@@ -54,4 +54,26 @@ function updateMessages() {
   fetchMessages().forEach(displayMessage)
 }
 
+/**
+ * @param {string} sender
+ * @param {string} message
+ */
+function sendMessage(sender, message) {
+  /**
+   * @type {Message}
+   */
+  const msg = {
+    sender: sender,
+    text: message,
+    timestamp: Date.now()
+  }
+  displayMessage(msg)
+}
+
+sendButton.addEventListener('click', () => {
+  const sender = nameInput.value
+  const message = messageInput.value
+  sendMessage(sender, message)
+})
+
 updateMessages()

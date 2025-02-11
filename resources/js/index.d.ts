@@ -1,5 +1,5 @@
 type Message = {
-  id: number,
+  id?: number,
   text: string,
   sender: string,
   timestamp: number
