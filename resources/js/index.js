@@ -34,7 +34,7 @@ function displayMessage(msg) {
 
   const senderInfo = document.createElement('div')
   senderInfo.classList.add('sender-info')
-  const time = new Date(msg.timestamp)
+  const time = new Date(parseInt(msg.timestamp))
   senderInfo.innerText = `${sender} ${time}`
   wrapper.replaceChildren(messageText, senderInfo)
 
